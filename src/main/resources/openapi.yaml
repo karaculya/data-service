@@ -1,0 +1,617 @@
+openapi: 3.0.0
+info:
+  title: DnD Service API
+  description: API для управления играми DnD, персонажами и пользователями
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/v1
+    description: Development server
+
+paths:
+  # User endpoints
+  /users:
+    post:
+      tags: [Users]
+      summary: Create user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{user_id}:
+    get:
+      tags: [ Users ]
+      summary: Get user
+      operationId: getUser
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    patch:
+      tags: [ Users ]
+      summary: Update user
+      operationId: updateUser
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModifyUser'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  # Role activation
+  /users/me/{user_id}/activate-master:
+    post:
+      tags: [ Users ]
+      summary: Activate master role
+      operationId: addMasterRole
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        '200':
+          description: Master role activated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/me/{user_id}/activate-player:
+    post:
+      tags: [ Users ]
+      summary: Activate player role
+      operationId: addPlayerRole
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        '200':
+          description: Player role activated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  # Game endpoints
+  /games:
+    get:
+      tags: [Games]
+      summary: Get list of games
+      operationId: getGames
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [PLANNED, ACTIVE, FINISHED, CANCELLED]
+        - in: query
+          name: master_id
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: is_public
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Games retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+
+    post:
+      tags: [Games]
+      summary: Create new game
+      operationId: createGame
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Game'
+      responses:
+        '201':
+          description: Game created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+
+  /games/{game_id}:
+    get:
+      tags: [Games]
+      summary: Get game details
+      operationId: getGame
+      parameters:
+        - $ref: '#/components/parameters/GameIdParam'
+      responses:
+        '200':
+          description: Game details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+
+    patch:
+      tags: [Games]
+      summary: Update game
+      operationId: updateGame
+      parameters:
+        - $ref: '#/components/parameters/GameIdParam'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModifyGame'
+      responses:
+        '200':
+          description: Game updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+
+    delete:
+      tags: [Games]
+      summary: Delete game
+      operationId: deleteGame
+      parameters:
+        - $ref: '#/components/parameters/GameIdParam'
+      responses:
+        '204':
+          description: Game deleted successfully
+
+  /games/{game_id}/join/{person_id}:
+    post:
+      tags: [Games]
+      summary: Join game
+      operationId: joinGame
+      parameters:
+        - $ref: '#/components/parameters/GameIdParam'
+        - $ref: '#/components/parameters/PersonIdParam'
+      responses:
+        '200':
+          description: Join request sent successfully
+
+  # Person endpoints
+  /persons:
+    post:
+      tags: [ Persons ]
+      summary: Create character in game
+      operationId: createPerson
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Person'
+      responses:
+        '201':
+          description: Character created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+
+  /persons/{game_id}:
+    get:
+      tags: [Persons]
+      summary: Get game characters
+      operationId: getGamePersons
+      parameters:
+        - $ref: '#/components/parameters/PersonIdParam'
+      responses:
+        '200':
+          description: Characters retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person'
+
+  /persons/{person_id}:
+    get:
+      tags: [Persons]
+      summary: Get character details
+      operationId: getPerson
+      parameters:
+        - $ref: '#/components/parameters/PersonIdParam'
+      responses:
+        '200':
+          description: Character details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+
+    patch:
+      tags: [Persons]
+      summary: Update character
+      operationId: updatePerson
+      parameters:
+        - $ref: '#/components/parameters/PersonIdParam'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModifyPerson'
+      responses:
+        '200':
+          description: Character updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+
+    delete:
+      tags: [Persons]
+      summary: Delete character
+      operationId: deletePerson
+      parameters:
+        - $ref: '#/components/parameters/PersonIdParam'
+      responses:
+        '204':
+          description: Character deleted successfully
+
+  /admin/users/{user_id}/roles:
+    put:
+      tags: [Admin]
+      summary: Update user roles (ADMIN only)
+      operationId: updateUserRoles
+      parameters:
+        - $ref: '#/components/parameters/PersonIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModifyRole'
+      responses:
+        '200':
+          description: Roles updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+components:
+  schemas:
+    # Базовые сущности
+    User:
+      type: object
+      required:
+        - user_id
+        - username
+        - email
+        - roles
+      properties:
+        user_id:
+          type: integer
+          format: int64
+          example: 5
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+          example: "dragon_slayer"
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        roles:
+          $ref: '#/components/schemas/roles'
+        avatar_url:
+          type: string
+          nullable: true
+          example: "https://example.com/avatar.jpg"
+        bio:
+          type: string
+          nullable: true
+        created_at:
+          $ref: '#/components/schemas/time'
+        updated_at:
+          $ref: '#/components/schemas/time'
+#        persons:
+#          type: array
+#          items:
+#            $ref: '#/components/schemas/Person'
+#        joined_games:
+#          type: array
+#          items:
+#            $ref: '#/components/schemas/Game'
+
+    Game:
+      type: object
+      required:
+        - id
+        - name
+        - master_id
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 789
+        name:
+          type: string
+          example: "Lost Mine of Phandelver"
+        description:
+          type: string
+          nullable: true
+        master_id:
+          type: integer
+          format: int64
+          example: 278
+        is_public:
+          type: boolean
+          example: true
+        max_players:
+          type: integer
+          minimum: 1
+          example: 5
+        status:
+          $ref: '#/components/schemas/status'
+        next_session:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2024-02-01T19:00:00Z"
+        created_at:
+          $ref: '#/components/schemas/time'
+        updated_at:
+          $ref: '#/components/schemas/time'
+
+    Person:
+      type: object
+      required:
+        - id
+        - name
+        - game_id
+        - player_id
+        - class
+        - level
+        - stats
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 101
+        name:
+          type: string
+          example: "Elric"
+        game_id:
+          type: integer
+          format: int64
+          example: 789
+        player_id:
+          type: integer
+          format: int64
+          example: 39
+        class:
+          type: string
+          example: "Wizard"
+        level:
+          type: integer
+          minimum: 1
+          maximum: 20
+          example: 3
+        bio:
+          type: string
+          nullable: true
+        stats:
+          type: array
+          maxItems: 6
+          minItems: 6
+          items:
+            $ref: '#/components/schemas/Stat'
+        inventory:
+          type: array
+          items:
+            $ref: '#/components/schemas/InventoryItem'
+        created_at:
+          $ref: '#/components/schemas/time'
+        updated_at:
+          $ref: '#/components/schemas/time'
+
+    Stat:
+      type: object
+      required:
+        - name
+        - value
+      properties:
+        name:
+          type: string
+          enum: [STR, DEX, CON, INT, WIS, CHA]
+          example: "DEX"
+        value:
+          type: integer
+          minimum: 1
+          maximum: 30
+          example: 16
+        modifier:
+          type: integer
+          minimum: -5
+          maximum: 10
+          example: 6
+
+    InventoryItem:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Staff of Magic"
+        type:
+          type: string
+          example: "weapon"
+        description:
+          type: string
+          nullable: true
+        quantity:
+          type: integer
+          minimum: 1
+          default: 1
+
+    # Модификационные сущности (для создания/обновления)
+    ModifyUser:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "new_username"
+        avatar_url:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+    ModifyGame:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Updated Game Name"
+        description:
+          type: string
+          nullable: true
+        is_public:
+          type: boolean
+          example: false
+        max_players:
+          type: integer
+          minimum: 1
+          maximum: 10
+          example: 6
+        status:
+          $ref: '#/components/schemas/status'
+        next_session:
+          type: string
+          format: date-time
+          nullable: true
+
+    ModifyPerson:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Updated Name"
+        class:
+          type: string
+          example: "Sorcerer"
+        level:
+          type: integer
+          minimum: 1
+          maximum: 20
+          example: 4
+        bio:
+          type: string
+          nullable: true
+        stats:
+          type: array
+          maxItems: 6
+          minItems: 6
+          items:
+            $ref: '#/components/schemas/Stat'
+        inventory:
+          type: array
+          items:
+            $ref: '#/components/schemas/InventoryItem'
+
+    ModifyRole:
+      type: object
+      required:
+        - roles
+      properties:
+        roles:
+          $ref: '#/components/schemas/roles'
+
+    # Повторяющиеся типы
+    roles:
+      type: array
+      items:
+        type: string
+        enum: [ ADMIN, MASTER, PLAYER ]
+      example: [ "PLAYER", "MASTER" ]
+
+    time:
+      type: string
+      format: date-time
+      example: "2024-01-20T14:45:00Z"
+
+    status:
+      type: string
+      enum: [ PLANNED, ACTIVE, FINISHED, CANCELLED ]
+      example: "ACTIVE"
+
+  parameters:
+    PageParam:
+      in: query
+      name: page
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Page number for pagination
+
+    LimitParam:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Number of items per page
+
+    UserIdParam:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: ID of the user
+
+    GameIdParam:
+      name: game_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: ID of the game
+
+    PersonIdParam:
+      name: person_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: ID of the person
