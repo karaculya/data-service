@@ -1,7 +1,6 @@
-package dnd.helper.dataservice.model;
+package dnd.helper.dataservice.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import openapi.dto.Game;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

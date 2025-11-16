@@ -1,6 +1,6 @@
 package dnd.helper.dataservice.model.mapper;
 
-import dnd.helper.dataservice.model.GameEntity;
+import dnd.helper.dataservice.model.entity.GameEntity;
 import openapi.dto.Game;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,8 +16,8 @@ public interface GameMapper {
 
     @Mapping(source = "masterId", target = "master.id")
     @Mapping(target = "players", ignore = true)
-    @Mapping(target = "createdAt", expression = "java(Utils.toLocalDateTime(dto.getCreatedAt()))")
-    @Mapping(target = "updatedAt", expression = "java(Utils.toLocalDateTime(dto.getUpdatedAt()))")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "nextSession", expression = "java(Utils.toLocalDateTime(dto.getNextSession()))")
     GameEntity toEntity(Game dto);
 }

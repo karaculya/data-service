@@ -1,6 +1,6 @@
 package dnd.helper.dataservice.model.mapper;
 
-import dnd.helper.dataservice.model.InventoryItemEntity;
+import dnd.helper.dataservice.model.entity.InventoryItemEntity;
 import openapi.dto.InventoryItem;
 import org.mapstruct.Mapper;
 

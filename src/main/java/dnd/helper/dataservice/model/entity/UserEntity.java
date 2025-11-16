@@ -1,4 +1,4 @@
-package dnd.helper.dataservice.model;
+package dnd.helper.dataservice.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import openapi.dto.User;

@@ -1,13 +1,22 @@
-package dnd.helper.dataservice.model;
+package dnd.helper.dataservice.model.entity;
 
 import jakarta.persistence.*;
-import openapi.dto.Stat;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "stats")
 public class StatEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Stat name;
+    private String name;
 
 //    min=1 max=30
     private Integer value;

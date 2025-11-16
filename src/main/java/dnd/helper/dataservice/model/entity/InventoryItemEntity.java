@@ -1,7 +1,17 @@
-package dnd.helper.dataservice.model;
+package dnd.helper.dataservice.model.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "inventories")
 public class InventoryItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

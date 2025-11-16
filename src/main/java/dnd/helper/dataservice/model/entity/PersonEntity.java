@@ -1,4 +1,4 @@
-package dnd.helper.dataservice.model;
+package dnd.helper.dataservice.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -50,11 +51,13 @@ public class PersonEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private List<StatEntity> stats;
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StatEntity> stats = new ArrayList<>();
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private List<InventoryItemEntity> inventory;
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InventoryItemEntity> inventory = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -63,4 +66,14 @@ public class PersonEntity {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public void addInventoryItem(InventoryItemEntity item) {
+        inventory.add(item);
+        item.setPerson(this);
+    }
+
+    public void addStatItem(StatEntity item) {
+        stats.add(item);
+        item.setPerson(this);
+    }
 }

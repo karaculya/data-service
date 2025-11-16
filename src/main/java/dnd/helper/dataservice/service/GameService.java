@@ -3,8 +3,8 @@ package dnd.helper.dataservice.service;
 import dnd.helper.dataservice.exception.ConflictException;
 import dnd.helper.dataservice.exception.FullnessException;
 import dnd.helper.dataservice.exception.NotFoundException;
-import dnd.helper.dataservice.model.GameEntity;
-import dnd.helper.dataservice.model.UserEntity;
+import dnd.helper.dataservice.model.entity.GameEntity;
+import dnd.helper.dataservice.model.entity.UserEntity;
 import dnd.helper.dataservice.model.mapper.GameMapper;
 import dnd.helper.dataservice.repository.GameRepository;
 import dnd.helper.dataservice.repository.UserRepository;
@@ -17,9 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +33,10 @@ public class GameService {
     public Game createGame(Game game) {
         UserEntity master = userRepository.findById(game.getMasterId())
                 .orElseThrow(() -> new NotFoundException("Мастер с id " + game.getMasterId() + " не найден"));
-        GameEntity gameEntity = mapper.toEntity(game);
+        GameEntity gameEntity = new GameEntity();
+        Long id = gameEntity.getId();
+        gameEntity = mapper.toEntity(game);
+        gameEntity.setId(id);
         gameEntity.setMaster(master);
 
         if (gameEntity.getStatus() == null) gameEntity.setStatus(Status.PLANNED);

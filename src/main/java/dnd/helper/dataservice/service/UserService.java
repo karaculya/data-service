@@ -3,7 +3,7 @@ package dnd.helper.dataservice.service;
 import openapi.dto.ModifyUser;
 import openapi.dto.User;
 import dnd.helper.dataservice.exception.NotFoundException;
-import dnd.helper.dataservice.model.UserEntity;
+import dnd.helper.dataservice.model.entity.UserEntity;
 import dnd.helper.dataservice.model.mapper.UserMapper;
 import dnd.helper.dataservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,11 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        UserEntity entity = repository.save(mapper.toEntity(user));
+        UserEntity entity = new UserEntity();
+        Long id = entity.getId();
+        entity = mapper.toEntity(user);
+        entity.setId(id);
+        entity = repository.save(entity);
         return mapper.toDto(entity);
     }
 

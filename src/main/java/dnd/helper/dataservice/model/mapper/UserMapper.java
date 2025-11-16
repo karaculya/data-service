@@ -1,6 +1,6 @@
 package dnd.helper.dataservice.model.mapper;
 
-import dnd.helper.dataservice.model.UserEntity;
+import dnd.helper.dataservice.model.entity.UserEntity;
 import openapi.dto.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,7 +16,7 @@ public interface UserMapper {
     @Mapping(target = "masterGames", ignore = true)
     @Mapping(target = "characters", ignore = true)
     @Mapping(target = "joinedGames", ignore = true)
-    @Mapping(target = "createdAt", expression = "java(Utils.toLocalDateTime(userDto.getCreatedAt()))")
-    @Mapping(target = "updatedAt", expression = "java(Utils.toLocalDateTime(userDto.getUpdatedAt()))")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     UserEntity toEntity(User userDto);
 }

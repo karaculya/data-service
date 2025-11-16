@@ -1,11 +1,14 @@
 package dnd.helper.dataservice.model.mapper;
 
 import openapi.dto.Person;
-import dnd.helper.dataservice.model.PersonEntity;
+import dnd.helper.dataservice.model.entity.PersonEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+        componentModel = "spring",
+        uses = {InventoryItemMapper.class, StatMapper.class}
+)
 public interface PersonMapper {
     @Mapping(source = "game.id", target = "gameId")
     @Mapping(source = "player.id", target = "playerId")
@@ -17,9 +20,7 @@ public interface PersonMapper {
     @Mapping(source = "gameId", target = "game.id")
     @Mapping(source = "playerId", target = "player.id")
     @Mapping(source = "propertyClass", target = "characterClass")
-    @Mapping(target = "stats", ignore = true)
-    @Mapping(target = "inventory", ignore = true)
-    @Mapping(target = "createdAt", expression = "java(Utils.toLocalDateTime(dto.getCreatedAt()))")
-    @Mapping(target = "updatedAt", expression = "java(Utils.toLocalDateTime(dto.getUpdatedAt()))")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     PersonEntity toEntity(Person dto);
 }
